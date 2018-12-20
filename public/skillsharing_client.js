@@ -96,7 +96,7 @@ class Talk {
   syncState(talk) {
     this.talk = talk
     this.comments.textContent = ''
-    for (let comment on talk.comments) {
+    for (let comment of talk.comments) {
       this.comments.appendChild(renderComment(comment))
     }
   }

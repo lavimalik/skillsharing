@@ -1,11 +1,11 @@
 const { createServer } = require('http')
 const Router = require('./router')
 const ecstatic = require('ecstatic')
+const { readFileSync, writeFile } = require('fs')
 
 const router = new Router()
 const defaultHeaders = {'Content-Type': 'text/plain'}
 
-const { readFileSync, writeFile } = require('fs')
 
 const fileName = './talks.json'
 
@@ -160,7 +160,10 @@ SkillShareServer.prototype.updated = function() {
   this.waiting.forEach(resolve => resolve(response))
   this.waiting = []
 
-  writeFile(fileName, JSON.stringify(this.talks))
+  writeFile(fileName, 
+    JSON.stringify(this.talks, true, 2), 
+    console.log
+  )
 }
 
 new SkillShareServer(loadTalks()).start(8000)
