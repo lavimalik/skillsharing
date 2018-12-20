@@ -5,6 +5,10 @@ const ecstatic = require('ecstatic')
 const router = new Router()
 const defaultHeaders = {'Content-Type': 'text/plain'}
 
+const { readFileSync, writeFile } = require('fs')
+
+const fileName = './talks.json'
+
 class SkillShareServer {
   constructor(talks) {
     this.talks = talks
@@ -140,11 +144,23 @@ SkillShareServer.prototype.waitForChanges = function(time) {
   })
 }
 
+function loadTalks() {
+  let json
+  try {
+    json = JSON.parse(readFileSync(fileName, 'utf8'))
+  } catch (e) {
+    json = {}
+  }
+  return Object.assign(Object.create(null), json)
+}
+
 SkillShareServer.prototype.updated = function() {
   this.version++
   let response = this.talkResponse()
   this.waiting.forEach(resolve => resolve(response))
   this.waiting = []
+
+  writeFile(fileName, JSON.stringify(this.talks))
 }
 
-new SkillShareServer(Object.create(null)).start(8000)
+new SkillShareServer(loadTalks()).start(8000)
